@@ -1,0 +1,3 @@
+npx nest g module auth
+npx nest g controller auth
+npx nest g service auth

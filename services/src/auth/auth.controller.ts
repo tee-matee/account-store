@@ -8,12 +8,21 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { CreateUserDto } from 'src/dto/create-user.dto';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @HttpCode(HttpStatus.CREATED)
+  @Post('register')
+  register(@Body() dto: CreateUserDto) {
+    return this.authService.register(dto);
+  }
 
   @HttpCode(HttpStatus.OK)
   @Post('login')

@@ -7,10 +7,16 @@ interface IDatabase {
   PORT: number;
 }
 
+interface IKey {
+  SERVER_PRIVATE: string;
+  SERVER_PUBLIC: string;
+  JWT_SECRET: string;
+}
+
 interface IResponse {
   SERVICE_PORT: number;
-  JWT_SECRET_KEY: string;
   DATABASE: IDatabase;
+  KEY: IKey;
 }
 
 export default (): IResponse => {
@@ -18,6 +24,9 @@ export default (): IResponse => {
   switch (process.env.STAGE) {
     case 'DEV':
       filePath = path.join(__dirname, '../../src/env/.develop.env');
+      break;
+    case 'UAT':
+      filePath = path.join(__dirname, '../../src/env/.uat.env');
       break;
     default:
       filePath = '';
@@ -27,10 +36,14 @@ export default (): IResponse => {
   // console.log('environment', environment);
   return {
     SERVICE_PORT: parseInt(environment['SERVICE_PORT'], 10),
-    JWT_SECRET_KEY: environment['JWT_SECRET_KEY'],
     DATABASE: {
       HOST: process.env.DATABASE_HOST,
       PORT: parseInt(process.env.DATABASE_PORT, 10) || 5432,
+    },
+    KEY: {
+      SERVER_PRIVATE: environment['SERVER_PRIVATE_KEY'],
+      SERVER_PUBLIC: environment['SERVER_PUBLIC_KEY'],
+      JWT_SECRET: environment['JWT_SECRET_KEY'],
     },
   };
 };

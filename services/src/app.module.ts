@@ -13,6 +13,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import configuration from './core/configuration';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { SettingModule } from './setting/setting.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
     }),
     AuthModule,
     UsersModule,
+    SettingModule,
   ],
   controllers: [AppController],
   providers: [

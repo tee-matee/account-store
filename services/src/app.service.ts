@@ -13,10 +13,55 @@ import { Injectable } from '@nestjs/common';
 // import jsPDF from 'jspdf';
 // // import PDFDocument  from "pdfkit"
 // import { writeFile, readFile, readFileSync } from 'fs';
+import {
+  privateDecrypt,
+  publicDecrypt,
+  publicEncrypt,
+  generateKeyPairSync,
+  privateEncrypt,
+  constants,
+} from 'crypto';
 
 @Injectable()
 export class AppService {
   getHello(): string {
+    const { publicKey, privateKey } = generateKeyPairSync('rsa', {
+      // The standard secure default length for RSA keys is 2048 bits
+      modulusLength: 2048,
+      publicKeyEncoding: {
+        type: 'pkcs1',
+        format: 'pem',
+      },
+
+      privateKeyEncoding: {
+        type: 'pkcs1',
+        format: 'pem',
+      },
+    });
+    console.log("publicKey", publicKey)
+    console.log("privateKey", privateKey)
+    const data = publicEncrypt(
+      {
+        key: publicKey,
+        padding: constants.RSA_PKCS1_OAEP_PADDING,
+        oaepHash: 'sha256',
+      },
+      Buffer.from(JSON.stringify({ email: '1', password: 2 })),
+    );
+    const client = data.toString('base64');
+    console.log('client', client);
+    const buf = Buffer.from(client, 'base64');
+    console.log('buf', buf);
+    const x = privateDecrypt(
+      {
+        key: privateKey,
+        padding: constants.RSA_PKCS1_OAEP_PADDING,
+        oaepHash: 'sha256',
+      },
+      Buffer.from(buf),
+    );
+    const test = JSON.parse(x.toString());
+    console.log('test', test);
     // const doc = new PDFDocument;
     // doc.create
     // var doc = new jsPDF();
